@@ -45,17 +45,17 @@ ROOT_DEV = 0x306
 entry _start
 _start:
 	mov	ax,#BOOTSEG
-	mov	ds,ax
+	mov	ds,ax       //ds为段寄存器，充当段基地址的作用。后面所有的内存地址都默认加上0x7c00(0x7c0向左移四位变成20位)
 	mov	ax,#INITSEG
-	mov	es,ax
-	mov	cx,#256
-	sub	si,si
-	sub	di,di
-	rep
-	movw
-	jmpi	go,INITSEG
-go:	mov	ax,cs
-	mov	ds,ax
+	mov	es,ax     //es=0x9000
+	mov	cx,#256   //cx=256
+	sub	si,si     //si=0
+	sub	di,di     //di=0
+	rep        //重复执行下列代码的意思，重复次数cx=256
+	movw       //不断的复制一个字(w=word 16位)，从ds:si指向的内存地址复制到es:di指向的内存地址
+	jmpi	go,INITSEG    //将0x7c00开始的512字节复制到0x9000开始的512字节，然后跳转到0x9000:0x0000（图像参考书p11图）
+go:	mov	ax,cs       //go的实际内存地址=0x90000+go
+	mov	ds,ax       //初始化ds,cs,es,ss
 	mov	es,ax
 ! put stack at 0x9ff00.
 	mov	ss,ax
